@@ -102,10 +102,14 @@ game:GetService("UserInputService").InputChanged:Connect(function(input)
         local sliderStart = sliderBar.AbsolutePosition.X
         local sliderEnd = sliderStart + sliderBar.AbsoluteSize.X
 
+        -- Calculate and clamp the new position
         local mousePosition = math.clamp(input.Position.X, sliderStart, sliderEnd)
         local relativePosition = mousePosition - sliderStart
 
+        -- Update knob position (constrained within slider)
         sliderKnob.Position = UDim2.new(0, relativePosition - sliderKnob.AbsoluteSize.X / 2, 0.35, 0)
+        
+        -- Update FOV and speed
         updateValues(relativePosition)
     end
 end)
