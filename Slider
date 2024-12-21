@@ -12,32 +12,47 @@ humanoid.RigType = Enum.HumanoidRigType.R6
 local screenGui = Instance.new("ScreenGui")
 local sliderFrame = Instance.new("Frame")
 local sliderBar = Instance.new("Frame")
-local sliderKnob = Instance.new("ImageButton")
+local sliderKnob = Instance.new("Frame")
+local uiCornerFrame = Instance.new("UICorner")
+local uiCornerBar = Instance.new("UICorner")
+local uiCornerKnob = Instance.new("UICorner")
 
 -- Set up UI properties
 screenGui.Parent = player:WaitForChild("PlayerGui")
 screenGui.Name = "FOVSpeedSlider"
 
-sliderFrame.Size = UDim2.new(0, 200, 0, 30)
-sliderFrame.Position = UDim2.new(0, 10, 0.5, -15)
+-- Slider Frame (Container)
+sliderFrame.Size = UDim2.new(0.6, 0, 0, 50) -- Adjusted to fit at the top
+sliderFrame.Position = UDim2.new(0.2, 0, 0, 20) -- Top center
 sliderFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 sliderFrame.BorderSizePixel = 0
 sliderFrame.Parent = screenGui
 
-sliderBar.Size = UDim2.new(0.9, 0, 0.2, 0)
-sliderBar.Position = UDim2.new(0.05, 0, 0.4, 0)
+-- Rounded Corners for Frame
+uiCornerFrame.CornerRadius = UDim.new(0, 10)
+uiCornerFrame.Parent = sliderFrame
+
+-- Slider Bar
+sliderBar.Size = UDim2.new(0.9, 0, 0.3, 0)
+sliderBar.Position = UDim2.new(0.05, 0, 0.35, 0)
 sliderBar.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
 sliderBar.BorderSizePixel = 0
 sliderBar.Parent = sliderFrame
 
-sliderKnob.Size = UDim2.new(0, 20, 0, 20)
-sliderKnob.Position = UDim2.new(0.5, -10, 0.3, 0)
+-- Rounded Corners for Bar
+uiCornerBar.CornerRadius = UDim.new(0, 5)
+uiCornerBar.Parent = sliderBar
+
+-- Slider Knob
+sliderKnob.Size = UDim2.new(0, 30, 0, 30) -- Circular knob
+sliderKnob.Position = UDim2.new(0.5, -15, 0.35, 0) -- Centered initially
 sliderKnob.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
 sliderKnob.BorderSizePixel = 0
-sliderKnob.Image = "rbxassetid://3570695787" -- Rounded knob
-sliderKnob.ScaleType = Enum.ScaleType.Slice
-sliderKnob.SliceCenter = Rect.new(100, 100, 100, 100)
 sliderKnob.Parent = sliderFrame
+
+-- Rounded Corners for Knob
+uiCornerKnob.CornerRadius = UDim.new(1, 0)
+uiCornerKnob.Parent = sliderKnob
 
 -- Slider settings
 local minFOV = 70
@@ -84,14 +99,13 @@ end)
 -- Update slider position based on input
 game:GetService("UserInputService").InputChanged:Connect(function(input)
     if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-        local mousePosition = input.Position.X
         local sliderStart = sliderBar.AbsolutePosition.X
         local sliderEnd = sliderStart + sliderBar.AbsoluteSize.X
 
-        local newPosition = math.clamp(mousePosition, sliderStart, sliderEnd)
-        local relativePosition = newPosition - sliderStart
+        local mousePosition = math.clamp(input.Position.X, sliderStart, sliderEnd)
+        local relativePosition = mousePosition - sliderStart
 
-        sliderKnob.Position = UDim2.new(0, relativePosition - sliderKnob.AbsoluteSize.X / 2, 0.3, 0)
+        sliderKnob.Position = UDim2.new(0, relativePosition - sliderKnob.AbsoluteSize.X / 2, 0.35, 0)
         updateValues(relativePosition)
     end
 end)
