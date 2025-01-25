@@ -1,0 +1,76 @@
+
+-- Function to replace animations for a specific character
+local function replaceAnimations(character)
+	if not character then
+		warn("Character not provided!")
+		return
+	end
+
+	local animateScript = character:FindFirstChild("Animate")
+	if not animateScript then
+		warn("Animate script not found in " .. character.Name .. "'s character.")
+		return
+	end
+
+	-- Define animations to replace
+	-- Add your new animation IDs here
+	local animationOverrides = {
+		idle = {
+			Animation1 = "135169692417392", -- Your idle animation
+			Animation2 = "135169692417392",
+		},
+		walk = {
+			WalkAnim = "131767148135869",
+		},
+		run = {
+			RunAnim = "100309292821758",
+		},
+		jump = {
+			JumpAnim = "130909947411666",
+		},
+		fall = {
+			FallAnim = "78280601120923",
+		},
+		climb = {
+			ClimbAnim = "74300742667518",
+		},
+	}
+	
+	
+	-- Helper function to update animations
+	local function updateAnimation(folderName, animationName, newId)
+		local folder = animateScript:FindFirstChild(folderName)
+		if folder then
+			local animation = folder:FindFirstChild(animationName)
+			if animation then
+				animation.AnimationId = "rbxassetid://" .. newId
+				print("Updated", folderName, animationName, "to", newId)
+			end
+		end
+	end
+
+	-- Apply overrides
+	for animType, animData in pairs(animationOverrides) do
+		for animName, animId in pairs(animData) do
+			updateAnimation(animType, animName, animId)
+		end
+	end
+
+	-- Optional: Remove unused states
+	local unusedStates = { "climb", "swim" }
+	for _, state in ipairs(unusedStates) do
+		local folder = animateScript:FindFirstChild(state)
+		if folder then
+			folder:Destroy()
+			print("Removed unused animation state:", state)
+		end
+	end
+
+	print(character.Name .. "'s animations updated successfully!")
+end
+
+-- Apply changes to all players
+for _, player in ipairs(game.Players:GetPlayers()) do
+	local character = player.Character or player.CharacterAdded:Wait()
+	replaceAnimations(character)
+end
